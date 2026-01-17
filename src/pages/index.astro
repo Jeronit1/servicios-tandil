@@ -86,6 +86,127 @@ const oficios = await client.fetch(query);
       </div>
 
     </main>
+
+    <div id="image-modal" class="modal-overlay">
+      <span class="close-btn">&times;</span>
+      
+      <a class="modal-prev">&#10094;</a>
+      
+      <img class="modal-content" id="img-enlarged" />
+      
+      <a class="modal-next">&#10095;</a>
+      
+      <div id="caption"></div>
+    </div>
+
+    <script>
+      // VARIABLES GLOBALES PARA LA GALERÍA
+      let currentGallery = []; // Aquí guardaremos las fotos de la tarjeta actual
+      let currentIndex = 0;    // El índice de la foto que estamos viendo
+
+      const modal = document.getElementById('image-modal');
+      const modalImg = document.getElementById('img-enlarged') as HTMLImageElement;
+      const captionText = document.getElementById('caption');
+      const closeBtn = document.querySelector('.close-btn');
+      const nextBtn = document.querySelector('.modal-next');
+      const prevBtn = document.querySelector('.modal-prev');
+
+      // 1. ABRIR EL MODAL Y DETECTAR GALERÍA
+      document.querySelectorAll('.zoomable').forEach((img) => {
+        img.addEventListener('click', (e) => {
+          const target = e.target as HTMLImageElement;
+          
+          // Truco: Buscamos el contenedor padre para saber qué fotos pertenecen a ESTE servicio
+          const container = target.closest('.carousel-slides');
+          
+          if (container) {
+            // Guardamos todas las imágenes de ESTA tarjeta específica
+            currentGallery = Array.from(container.querySelectorAll('.zoomable')) as HTMLImageElement[];
+            // Encontramos en qué posición está la foto que clickeamos
+            currentIndex = currentGallery.indexOf(target);
+          } else {
+            // Si por algo falla, hacemos una galería de 1 sola foto
+            currentGallery = [target];
+            currentIndex = 0;
+          }
+
+          openModal();
+        });
+      });
+
+      function openModal() {
+        if (!modal || !modalImg) return;
+        modal.style.display = "flex";
+        updateImage();
+      }
+
+      function updateImage() {
+        if (!modalImg || !captionText) return;
+        const imgObj = currentGallery[currentIndex];
+        
+        modalImg.src = imgObj.src;
+        captionText.innerText = imgObj.alt;
+
+        // Ocultar flechas si solo hay 1 foto
+        if (currentGallery.length <= 1) {
+            if(nextBtn) (nextBtn as HTMLElement).style.display = 'none';
+            if(prevBtn) (prevBtn as HTMLElement).style.display = 'none';
+        } else {
+            if(nextBtn) (nextBtn as HTMLElement).style.display = 'block';
+            if(prevBtn) (prevBtn as HTMLElement).style.display = 'block';
+        }
+      }
+
+      // 2. NAVEGACIÓN (Siguiente / Anterior)
+      function showNext() {
+        currentIndex++;
+        if (currentIndex >= currentGallery.length) {
+          currentIndex = 0; // Vuelve al principio (loop)
+        }
+        updateImage();
+      }
+
+      function showPrev() {
+        currentIndex--;
+        if (currentIndex < 0) {
+          currentIndex = currentGallery.length - 1; // Va al final (loop)
+        }
+        updateImage();
+      }
+
+      if (nextBtn) nextBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Evita que se cierre el modal al hacer clic
+        showNext();
+      });
+
+      if (prevBtn) prevBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showPrev();
+      });
+
+      // Teclas del teclado (Flechas izquierda/derecha)
+      document.addEventListener('keydown', (e) => {
+        if (modal && modal.style.display === "flex") {
+          if (e.key === "ArrowRight") showNext();
+          if (e.key === "ArrowLeft") showPrev();
+          if (e.key === "Escape") closeModal();
+        }
+      });
+
+      // 3. CERRAR MODAL
+      function closeModal() {
+        if (modal) modal.style.display = "none";
+      }
+
+      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      
+      if (modal) {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) closeModal();
+        });
+      }
+    </script>
+
     <SpeedInsights />
   </body>
 </html>
@@ -121,6 +242,111 @@ const oficios = await client.fetch(query);
   }
   .icon-sad { font-size: 3rem; margin-bottom: 1rem; }
   .no-results-message h3 { margin: 0; color: #333; }
+
+  /* BOTONES DE NAVEGACIÓN (FLECHAS) */
+  .modal-prev, .modal-next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    margin-top: -50px;
+    color: white;
+    font-weight: bold;
+    font-size: 40px; /* Flechas grandes */
+    transition: 0.3s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+    z-index: 1001;
+  }
+
+  /* Posición Izquierda */
+  .modal-prev {
+    left: 20px; /* Un poco separado del borde */
+    border-radius: 3px 0 0 3px;
+  }
+
+  /* Posición Derecha */
+  .modal-next {
+    right: 20px;
+    border-radius: 3px 0 0 3px;
+  }
+
+  /* Efecto Hover */
+  .modal-prev:hover, .modal-next:hover {
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro al pasar el mouse */
+    transform: scale(1.1); /* Crece un poquito */
+  }
+
+  /* Asegurar que la imagen no tape las flechas en móviles */
+  @media (max-width: 768px) {
+    .modal-prev, .modal-next {
+      font-size: 30px;
+      padding: 10px;
+    }
+  }
+
+  /* ESTILOS DEL MODAL (Fondo Oscuro) */
+  .modal-overlay {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    z-index: 1000; /* Por encima de todo */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.9); /* Fondo negro semitransparente */
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    animation: fadeIn 0.3s;
+  }
+
+  /* La imagen agrandada */
+  .modal-content {
+    margin: auto;
+    display: block;
+    max-width: 90%;
+    max-height: 80vh;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.2);
+    animation: zoomIn 0.3s;
+  }
+
+  /* Texto de descripción */
+  #caption {
+    margin: 15px 0;
+    width: 80%;
+    text-align: center;
+    color: #ccc;
+    font-size: 1.2rem;
+  }
+
+  /* Botón de cerrar (X) */
+  .close-btn {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .close-btn:hover {
+    color: #bbb;
+  }
+
+  /* Animaciones suaves */
+  @keyframes zoomIn {
+    from {transform:scale(0)} 
+    to {transform:scale(1)}
+  }
+  @keyframes fadeIn {
+    from {opacity:0} 
+    to {opacity:1}
+  }
 
   @keyframes fadeIn {
     from { opacity: 0; }
