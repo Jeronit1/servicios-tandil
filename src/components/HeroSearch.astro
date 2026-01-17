@@ -1,0 +1,207 @@
+---
+const rubros = [
+  { label: 'Seleccione un rubro', value: 'todos' },
+  { label: 'Gasista', value: 'gasista' },
+  { label: 'Plomero', value: 'plomero' },
+  { label: 'Electricista', value: 'electricista' },
+  { label: 'Carpintero', value: 'carpintero' },
+  { label: 'Climatización / Aire', value: 'climatizacion' },
+  { label: 'Albañil', value: 'albanil' },
+  { label: 'Pintor', value: 'pintor' },
+  { label: 'Techista', value: 'techista' },
+  { label: 'Jardinería', value: 'jardinero' },
+  { label: 'Fletes / Mudanzas', value: 'fletes' },
+  { label: 'Bienestar Personal', value: 'bienestar personal' },
+  { label: 'Mecanica', value: 'mecanica' },
+  { label: 'Arreglos y Costura', value: 'arreglo y costura' }
+];
+---
+
+<section class="hero-section">
+  <div class="hero-content">
+    
+    <div class="text-content">
+      <h1>SERVICIOS TANDIL</h1>
+      <p class="subtitle">Encontrá oficios de confianza cerca de tu casa</p>
+    </div>
+
+    <div class="search-box">
+      
+      <div class="input-group text-input">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="searchInput" placeholder="¿Qué estás buscando? (Ej: gasista, corte de pasto...)" />
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="input-group select-input">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <select id="rubroSelect">
+          {rubros.map(r => (
+            <option value={r.value}>{r.label}</option>
+          ))}
+        </select>
+      </div>
+
+    </div>
+    
+    <p id="resultCount" class="result-count"></p>
+  </div>
+</section>
+
+<style>
+  /* 1. SECCIÓN CON FONDO SUTILMENTE DEGRADADO */
+  .hero-section {
+    /* Este es el "leve cambio de color": Un degradado muy suave de blanco a gris azulado */
+    background: #f4f7f6;
+    padding: 4rem 1rem 3rem 1rem; /* Más espacio arriba y abajo para que respire */
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    border-bottom: 1px solid #eef2f5; /* Una línea sutil abajo para separar */
+  }
+
+  .hero-content { width: 100%; max-width: 900px; }
+
+  /* 2. TIPOGRAFÍA BONITA Y VISIBLE */
+  .text-content {
+    margin-bottom: 2.5rem; /* Espacio entre el texto y el buscador */
+  }
+
+  h1 { 
+    color: #003366; /* Azul Institucional Oscuro */
+    margin: 0 0 0.5rem 0; 
+    font-size: 2.8rem; /* Bien grande */
+    font-weight: 900; 
+    text-transform: uppercase;
+    letter-spacing: -1px;
+  }
+  
+  .subtitle { 
+    display: block; /* Aseguramos que se vea */
+    color: #666; 
+    font-size: 1.2rem;
+    font-weight: 400;
+    margin: 0;
+  }
+
+  /* 3. BARRA DE BÚSQUEDA (Estilo flotante limpio) */
+  .search-box {
+    background: white;
+    border: 1px solid #e1e4e8;
+    border-radius: 16px; /* Bordes amigables */
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 10px 40px rgba(0,51,102,0.08); /* Sombra azulada muy suave */
+    flex-wrap: wrap;
+    max-width: 850px;
+    margin: 0 auto;
+    transition: box-shadow 0.3s ease;
+  }
+
+  /* Efecto al pasar el mouse por el buscador */
+  .search-box:hover {
+    box-shadow: 0 15px 50px rgba(0,51,102,0.12);
+    border-color: #d0d7de;
+  }
+
+  .input-group {
+    display: flex;
+    align-items: center;
+    padding: 5px 15px;
+    flex: 1;
+  }
+
+  .input-group svg { stroke: #003366; opacity: 0.6; } /* Iconos un poco azulados */
+
+  .text-input input {
+    width: 100%;
+    border: none;
+    padding: 14px;
+    font-size: 1.05rem;
+    outline: none;
+    color: #333;
+    background: transparent;
+  }
+  .text-input input::placeholder { color: #999; }
+
+  .select-input select {
+    width: 100%;
+    border: none;
+    padding: 14px;
+    font-size: 1.05rem;
+    outline: none;
+    background: transparent;
+    cursor: pointer;
+    color: #444;
+    font-weight: 500;
+  }
+
+  .divider {
+    width: 1px;
+    height: 35px;
+    background-color: #eee;
+    display: block;
+  }
+
+  .result-count {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 1.5rem;
+    min-height: 1.5rem;
+    font-weight: 500;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .hero-section { padding: 3rem 1rem; }
+    h1 { font-size: 2rem; }
+    .subtitle { font-size: 1rem; }
+    .search-box { flex-direction: column; padding: 10px; border-radius: 20px; }
+    .divider { width: 100%; height: 1px; margin: 8px 0; }
+    .input-group { width: 100%; padding: 5px; }
+  }
+</style>
+
+<script>
+  // LA LÓGICA DE BÚSQUEDA (Sin cambios)
+  const searchInput = document.getElementById('searchInput');
+  const rubroSelect = document.getElementById('rubroSelect');
+  const countLabel = document.getElementById('resultCount');
+
+  function filterCards() {
+    const text = searchInput.value.toLowerCase();
+    const categoria = rubroSelect.value;
+    let visibles = 0;
+
+    const cards = document.querySelectorAll('.service-item');
+    
+    cards.forEach(card => {
+      const cardRubro = card.getAttribute('data-rubro');
+      const cardTexto = card.getAttribute('data-texto');
+
+      const matchText = cardTexto.includes(text);
+      const matchRubro = categoria === 'todos' || cardRubro === categoria;
+
+      if (matchText && matchRubro) {
+        (card as HTMLElement).style.display = 'flex';
+        visibles++;
+      } else {
+        (card as HTMLElement).style.display = 'none';
+      }
+    });
+
+    const noResultsDiv = document.getElementById('no-results');
+    if (visibles === 0) {
+      if(noResultsDiv) noResultsDiv.style.display = 'block';
+      countLabel.textContent = "";
+    } else {
+      if(noResultsDiv) noResultsDiv.style.display = 'none';
+      countLabel.textContent = ""; 
+    }
+  }
+
+  searchInput.addEventListener('input', filterCards);
+  rubroSelect.addEventListener('change', filterCards);
+</script>

@@ -1,16 +1,123 @@
 ---
+import { client } from '../lib/sanity';
+import ServiceCard from '../components/ServiceCard.astro';
+import HeroSearch from '../components/HeroSearch.astro'; // <--- 1. Importamos el Buscador
 
+// CONSULTA A LA BASE DE DATOS (GROQ)
+// Traemos todos los datos necesarios, incluyendo las redes y puntuación
+// CONSULTA INTELIGENTE (GROQ)
+const query = `*[_type == "oficio"] | order(_createdAt desc) {
+  _id,
+  titulo,
+  rubro,
+  descripcion,
+  imagenes,
+  whatsapp,
+  barrio,
+  instagram,
+  facebook,
+  
+  // DATOS MANUALES (Los que cargas tú en Sanity)
+  "puntuacion_manual": puntuacion,
+  "votos_manuales": cantidad_votos,
+
+  // DATOS AUTOMÁTICOS (Calculados de las reseñas reales)
+  "promedio_real": math::avg(*[_type == "resena" && oficio._ref == ^._id].puntuacion),
+  "conteo_real": count(*[_type == "resena" && oficio._ref == ^._id])
+}`;
+
+const oficios = await client.fetch(query);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Servicios Tandil</title>
+  </head>
+  <body>
+    
+    <HeroSearch />
+
+    <main class="container">
+      
+      <div class="grid">
+        {oficios.map((oficio) => {
+          
+          // LÓGICA DE PRIORIDAD:
+          // 1. ¿Tiene reseñas reales? Usamos el promedio real.
+          // 2. ¿No tiene? Usamos el manual que pusiste en Sanity.
+          // 3. ¿Tampoco tiene manual? Ponemos 0.
+          const ratingFinal = oficio.promedio_real || oficio.puntuacion_manual || 0;
+          
+          // Lo mismo para los votos: Si hay reales mostramos esos, si no los manuales (ej: "12 votos")
+          const votosFinales = oficio.conteo_real > 0 ? oficio.conteo_real : (oficio.votos_manuales || 0);
+
+          return (
+            <ServiceCard 
+              _id={oficio._id}
+              titulo={oficio.titulo}
+              rubro={oficio.rubro}
+              descripcion={oficio.descripcion}
+              imagenes={oficio.imagenes}
+              whatsapp={oficio.whatsapp}
+              barrio={oficio.barrio}
+              instagram={oficio.instagram}
+              facebook={oficio.facebook}
+              
+              /* AQUÍ PASAMOS LOS VALORES CALCULADOS */
+              puntuacion={ratingFinal}
+              cantidad_votos={votosFinales}
+            />
+          )
+        })}
+      </div>
+
+      <div id="no-results" class="no-results-message" style="display: none;">
+        <div class="icon-sad">😕</div>
+        <h3>No encontramos servicios con esa búsqueda</h3>
+        <p>Intenta con otra palabra clave o selecciona "Todos los Rubros".</p>
+      </div>
+
+    </main>
+
+  </body>
 </html>
+
+<style>
+  /* ESTILOS GLOBALES */
+  body { 
+    font-family: 'Segoe UI', system-ui, sans-serif; 
+    margin: 0; 
+    background-color: #f4f6f8; 
+    padding-bottom: 50px;
+  }
+  
+  .container { 
+    max-width: 1100px; 
+    margin: 0 auto; 
+    padding: 2rem 1rem; 
+  }
+
+  /* GRILLA RESPONSIVA */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Tarjetas un poco más anchas */
+    gap: 2rem;
+  }
+
+  /* ESTILO DEL MENSAJE SIN RESULTADOS */
+  .no-results-message {
+    text-align: center;
+    padding: 3rem;
+    color: #666;
+    animation: fadeIn 0.5s ease;
+  }
+  .icon-sad { font-size: 3rem; margin-bottom: 1rem; }
+  .no-results-message h3 { margin: 0; color: #333; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+</style>
