@@ -2,6 +2,7 @@
 import { client } from '../lib/sanity';
 import ServiceCard from '../components/ServiceCard.astro';
 import HeroSearch from '../components/HeroSearch.astro'; // <--- 1. Importamos el Buscador
+import SpeedInsights from '@vercel/speed-insights/astro';
 
 // CONSULTA A LA BASE DE DATOS (GROQ)
 // Traemos todos los datos necesarios, incluyendo las redes y puntuación
@@ -36,7 +37,6 @@ const oficios = await client.fetch(query);
     <title>Servicios Tandil</title>
   </head>
   <body>
-    
     <HeroSearch />
 
     <main class="container">
@@ -80,7 +80,7 @@ const oficios = await client.fetch(query);
       </div>
 
     </main>
-
+    <SpeedInsights />
   </body>
 </html>
 
