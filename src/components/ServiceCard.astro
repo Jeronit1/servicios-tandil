@@ -4,7 +4,7 @@ import { urlFor } from '../lib/sanity';
 const { 
   _id, // <--- IMPORTANTE: Recibimos el ID del oficio para el formulario
   titulo, rubro, descripcion, imagenes, whatsapp, barrio, 
-  instagram, facebook, puntuacion, cantidad_votos 
+  instagram, facebook, puntuacion, cantidad_votos, priority = false
 } = Astro.props;
 
 // --- CONFIGURACIÓN DEL FORMULARIO DE RESEÑAS ---
@@ -29,7 +29,13 @@ const slides = hasImages ? imagenes : ["placeholder"];
 
 const getImageUrl = (img) => {
   if (img === "placeholder") return "https://via.placeholder.com/600x450?text=Sin+Foto";
-  return urlFor(img).width(600).height(450).fit('crop').url();
+  return urlFor(img)
+    .width(600)
+    .height(450)
+    .fit('crop')
+    .auto('format') // Convierte a WebP automáticamente
+    .quality(80)    // Baja el peso sin perder nitidez visible
+    .url();
 };
 
 const mensaje = `Hola, te contacto por Servicios Tandil. Vi tu perfil de ${rubro} y me interesa un presupuesto.`;
@@ -62,7 +68,8 @@ const getFillPercent = (starIndex) => {
             src={getImageUrl(img)} 
             alt={titulo} 
             class="zoomable" 
-            loading="lazy" 
+            loading={priority ? "eager" : "lazy"}
+            fetchpriority={priority ? "high" : "auto"} 
           />
         </div>
       ))}

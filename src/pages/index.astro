@@ -36,6 +36,7 @@ const oficios = await client.fetch(query);
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>Servicios Tandil</title>
+    <link rel="preconnect" href="https://cdn.sanity.io" />
     <link rel="icon" type="image/svg+xml" href="/favicon1.svg" />
     <meta name="description" content="Encuentra los mejores servicios en Tandil. Guía de oficios con reseñas reales de vecinos. Plomeros, electricistas, pintores y más.">
 
@@ -50,7 +51,7 @@ const oficios = await client.fetch(query);
     <main class="container">
       
       <div class="grid">
-        {oficios.map((oficio) => {
+        {oficios.map((oficio, index) => {
           
           // LÓGICA DE PRIORIDAD:
           // 1. ¿Tiene reseñas reales? Usamos el promedio real.
@@ -76,6 +77,8 @@ const oficios = await client.fetch(query);
               /* AQUÍ PASAMOS LOS VALORES CALCULADOS */
               puntuacion={ratingFinal}
               cantidad_votos={votosFinales}
+              /* Si el índice es 0 o 1 (las primeras dos), le damos prioridad */
+              priority={index <= 1}
             />
           )
         })}
@@ -102,6 +105,7 @@ const oficios = await client.fetch(query);
     </div>
 
     <script>
+      window.addEventListener('load', () => {
       // VARIABLES GLOBALES PARA LA GALERÍA
       let currentGallery = []; // Aquí guardaremos las fotos de la tarjeta actual
       let currentIndex = 0;    // El índice de la foto que estamos viendo
@@ -209,7 +213,7 @@ const oficios = await client.fetch(query);
         modal.addEventListener('click', (e) => {
           if (e.target === modal) closeModal();
         });
-      }
+      }});
     </script>
     <Footer />
     <SpeedInsights />
@@ -359,8 +363,4 @@ const oficios = await client.fetch(query);
     to {opacity:1}
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
 </style>
