@@ -1,0 +1,116 @@
+---
+const today = new Date();
+---
+
+<footer class="site-footer">
+  <div class="footer-container">
+    
+    <div class="footer-section disclaimer">
+      <h4>Sobre Servicios Tandil</h4>
+      <p>
+        Servicios Tandil funciona únicamente como espacio de difusión y contacto, 
+        y no se responsabiliza ni responde por los trabajos, acuerdos o resultados 
+        de los servicios publicados.
+      </p>
+      <p class="small-note">
+        Este es un proyecto independiente para conectar vecinos.
+      </p>
+    </div>
+
+    <div class="footer-section links">
+      <h4>Navegación</h4>
+      <ul>
+        <li><a href="#">Volver Arriba ↑</a></li>
+        
+        <li>
+          <a href="https://wa.me/5492494648446?text=Hola%20Servicios%20Tandil,%20tengo%20una%20consulta" target="_blank">
+            Contacto / Soporte
+          </a>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="copyright-bar">
+    <p>
+      &copy; {today.getFullYear()} Servicios Tandil. Hecho con 🧉 en Argentina.
+    </p>
+  </div>
+</footer>
+
+<style>
+  /* --- ESTILOS DEL FOOTER --- */
+  .site-footer {
+    background-color: #1e293b; /* Color oscuro profesional (Slate 800) */
+    color: #cbd5e1; /* Texto gris claro para que no canse la vista */
+    padding-top: 3rem;
+    margin-top: 4rem; /* Separación de las tarjetas */
+    font-size: 0.9rem;
+    border-top: 4px solid #3b82f6; /* Una línea azul arriba para decorar */
+  }
+
+  .footer-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem 2rem 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas */
+    gap: 3rem;
+  }
+
+  h4 {
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  /* Estilo del Disclaimer */
+  .disclaimer p {
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+    opacity: 0.9;
+  }
+  .small-note {
+    font-size: 0.8rem;
+    opacity: 0.6 !important;
+    font-style: italic;
+  }
+
+  /* Estilo de los Links */
+  .links ul {
+    list-style: none;
+    padding: 0;
+  }
+  .links li {
+    margin-bottom: 0.8rem;
+  }
+  .links a {
+    color: #cbd5e1;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .links a:hover {
+    color: #60a5fa; /* Azul claro al pasar el mouse */
+    text-decoration: underline;
+  }
+
+  /* Barra de Copyright */
+  .copyright-bar {
+    background-color: #0f172a; /* Un tono más oscuro para el final */
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.85rem;
+    color: #64748b;
+  }
+
+  /* --- RESPONSIVE (CELULAR) --- */
+  @media (max-width: 768px) {
+    .footer-container {
+      grid-template-columns: 1fr; /* Una sola columna en celular */
+      gap: 2rem;
+      text-align: center;
+    }
+  }
+</style>

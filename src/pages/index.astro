@@ -1,6 +1,7 @@
 ---
 import { client } from '../lib/sanity';
 import ServiceCard from '../components/ServiceCard.astro';
+import Footer from '../components/Footer.astro';
 import HeroSearch from '../components/HeroSearch.astro'; // <--- 1. Importamos el Buscador
 import SpeedInsights from '@vercel/speed-insights/astro';
 
@@ -83,7 +84,7 @@ const oficios = await client.fetch(query);
       <div id="no-results" class="no-results-message" style="display: none;">
         <div class="icon-sad">😕</div>
         <h3>No encontramos servicios con esa búsqueda</h3>
-        <p>Intenta con otra palabra clave o selecciona "Todos los Rubros".</p>
+        <p>Intenta con otra palabra clave o selecciona "Seleccione un rubro".</p>
       </div>
 
     </main>
@@ -207,7 +208,7 @@ const oficios = await client.fetch(query);
         });
       }
     </script>
-
+    <Footer />
     <SpeedInsights />
   </body>
 </html>
@@ -218,20 +219,26 @@ const oficios = await client.fetch(query);
     font-family: 'Segoe UI', system-ui, sans-serif; 
     margin: 0; 
     background-color: #f4f6f8; 
-    padding-bottom: 50px;
+    /* PARA QUE EL FOOTER SIEMPRE QUEDE ABAJO */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
   }
   
   .container { 
     max-width: 1100px; 
     margin: 0 auto; 
     padding: 2rem 1rem; 
+    width: 100%; 
+    box-sizing: border-box; /* Asegura que el padding no rompa el ancho */
   }
 
   /* GRILLA RESPONSIVA */
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Tarjetas un poco más anchas */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
+    width: 100%;
   }
 
   /* ESTILO DEL MENSAJE SIN RESULTADOS */
