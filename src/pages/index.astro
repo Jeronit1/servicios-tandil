@@ -138,8 +138,11 @@ const oficios = await client.fetch(query);
 
       function openModal() {
         if (!modal || !modalImg) return;
-        modal.style.display = "flex";
-        updateImage();
+        // Pequeña optimización para que no bloquee el clic
+        requestAnimationFrame(() => {
+          modal.style.display = "flex";
+          updateImage();
+        });
       }
 
       function updateImage() {
